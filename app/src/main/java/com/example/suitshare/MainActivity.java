@@ -24,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 // Intent to start Login activity
-                Intent loginIntent = new Intent(MainActivity.this, LoginActivity.class);
+                Intent loginIntent = new Intent(MainActivity.this, Login.class);
                 startActivity(loginIntent);
             }
         });
@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 // Intent to start Register activity
-                Intent registerIntent = new Intent(MainActivity.this, register.class);
+                Intent registerIntent = new Intent(MainActivity.this, Register.class);
                 startActivity(registerIntent);
             }
         });
