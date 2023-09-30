@@ -90,6 +90,21 @@
                 android:contentDescription="Re-enter your password for confirmation" />
         </com.google.android.material.textfield.TextInputLayout>
 
+        <ImageView
+            android:id="@+id/avatarImageView"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_centerHorizontal="true"
+            android:src="@drawable/avatar" />
+
+        <Button
+            android:id="@+id/avatarButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Choose Avatar or Upload Photo"
+            android:layout_below="@+id/avatarImageView"/>
+
+
         <Button
             android:id="@+id/registerSubmitButton"
             android:layout_width="match_parent"

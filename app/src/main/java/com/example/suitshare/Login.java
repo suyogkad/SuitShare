@@ -40,7 +40,7 @@ public class Login extends AppCompatActivity {
                     if (res.getCount() == 1) {
                         // Login successful
                         Toast.makeText(Login.this, "Login successful!", Toast.LENGTH_SHORT).show();
-                        startActivity(new Intent(Login.this, MainActivity.class));
+                        startActivity(new Intent(Login.this, Dashboard.class));
                     } else {
                         Toast.makeText(Login.this, "Invalid credentials!", Toast.LENGTH_SHORT).show();
                     }
