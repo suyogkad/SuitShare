@@ -32,6 +32,9 @@ public class Register extends AppCompatActivity {
         confirmPassword = findViewById(R.id.confirmPasswordEditText);
         registerSubmitButton = findViewById(R.id.registerSubmitButton);
 
+        // Set the hint for DOB format
+        dob.setHint("Date of Birth (YYYY-MM-DD)");
+
         registerSubmitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -43,31 +46,23 @@ public class Register extends AppCompatActivity {
                 String pwd = password.getText().toString().trim();
                 String confirmPwd = confirmPassword.getText().toString().trim();
 
-                // Check for required fields
-                if (TextUtils.isEmpty(fullNameValue) || TextUtils.isEmpty(user) || TextUtils.isEmpty(em) || TextUtils.isEmpty(phone)) {
-                    Toast.makeText(Register.this, "All required fields must be filled out!", Toast.LENGTH_SHORT).show();
+                if (TextUtils.isEmpty(fullNameValue) || TextUtils.isEmpty(user) || TextUtils.isEmpty(em)
+                        || TextUtils.isEmpty(phone) || TextUtils.isEmpty(dobValue)
+                        || TextUtils.isEmpty(pwd) || TextUtils.isEmpty(confirmPwd)) {
+                    Toast.makeText(Register.this, "All fields are required!", Toast.LENGTH_SHORT).show();
                     return;
                 }
 
-                // Check if passwords match
-                if (!pwd.equals(confirmPwd)) {
-                    Toast.makeText(Register.this, "Passwords do not match!", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                // Check if username already exists in the database
-                if (db.checkUsernameExists(user)) {
-                    Toast.makeText(Register.this, "Username already taken!", Toast.LENGTH_SHORT).show();
-                    return;
-                }
-
-                // Insert data into the database
-                boolean isInserted = db.insertData(fullNameValue, user, em, phone, dobValue, pwd);
-                if (isInserted) {
-                    Toast.makeText(Register.this, "Registered successfully!", Toast.LENGTH_SHORT).show();
-                    startActivity(new Intent(Register.this, Login.class));
+                if (pwd.equals(confirmPwd)) {
+                    boolean isInserted = db.insertData(fullNameValue, user, em, phone, dobValue, pwd);
+                    if (isInserted) {
+                        Toast.makeText(Register.this, "Registered successfully!", Toast.LENGTH_SHORT).show();
+                        startActivity(new Intent(Register.this, Login.class));
+                    } else {
+                        Toast.makeText(Register.this, "Registration failed!", Toast.LENGTH_SHORT).show();
+                    }
                 } else {
-                    Toast.makeText(Register.this, "Registration failed!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Register.this, "Passwords do not match.", Toast.LENGTH_SHORT).show();
                 }
             }
         });
