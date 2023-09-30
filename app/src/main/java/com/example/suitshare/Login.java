@@ -10,7 +10,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-class Login extends AppCompatActivity {
+public class Login extends AppCompatActivity {
 
     EditText loginEmail, loginPassword;
     Button loginSubmitButton;
