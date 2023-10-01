@@ -6,27 +6,26 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String DATABASE_NAME = "users.db";
     private static final String TABLE_NAME = "user_table";
     private static final String COL_1 = "ID";
     private static final String COL_2 = "FULLNAME";
-    private static final String COL_3 = "USERNAME";
+    public static final String COL_3 = "USERNAME";
     private static final String COL_4 = "EMAIL";
     private static final String COL_5 = "PHONE";
     private static final String COL_6 = "DOB";
     private static final String COL_7 = "PASSWORD";
-    private static final String COL_8 = "AVATAR"; // Added column for Avatar URI
+    public static final String COL_8 = "AVATAR";
 
     public DatabaseHelper(Context context) {
-        super(context, DATABASE_NAME, null, 3); // version updated to 2 since the database schema has changed
+        super(context, DATABASE_NAME, null, 3);
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("CREATE TABLE " + TABLE_NAME + " (ID INTEGER PRIMARY KEY AUTOINCREMENT, FULLNAME TEXT, USERNAME TEXT UNIQUE, EMAIL TEXT, PHONE TEXT, DOB TEXT, PASSWORD TEXT, AVATAR TEXT)"); // Avatar field added here
+        db.execSQL("CREATE TABLE " + TABLE_NAME + " (ID INTEGER PRIMARY KEY AUTOINCREMENT, FULLNAME TEXT, USERNAME TEXT UNIQUE, EMAIL TEXT UNIQUE, PHONE TEXT, DOB TEXT, PASSWORD TEXT, AVATAR TEXT)");
     }
 
     @Override
@@ -34,7 +33,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
         onCreate(db);
     }
-
 
     public boolean insertData(String fullname, String username, String email, String phone, String dob, String password, String avatarUri) {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -45,19 +43,16 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         contentValues.put(COL_5, phone);
         contentValues.put(COL_6, dob);
         contentValues.put(COL_7, password);
-        contentValues.put(COL_8, avatarUri); // to put the avatar URI
+        contentValues.put(COL_8, avatarUri);
         long result = db.insert(TABLE_NAME, null, contentValues);
-        return result != -1;  // if result == -1 data not inserted
+        db.close();
+        return result != -1;
     }
 
-
     public Cursor checkUser(String email, String password) {
-        SQLiteDatabase db = this.getReadableDatabase();  // <-- Changed to getReadableDatabase
+        SQLiteDatabase db = this.getReadableDatabase();
         Cursor res = db.rawQuery("SELECT * FROM " + TABLE_NAME + " WHERE EMAIL=? AND PASSWORD=?", new String[]{email, password});
-
-        Log.d("DatabaseHelper", "Checking user with email: " + email + " and password: " + password);
-        Log.d("DatabaseHelper", "Query result count: " + res.getCount());
-
+//        db.close();
         return res;
     }
 
@@ -66,6 +61,47 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_NAME + " WHERE USERNAME=?", new String[]{username});
         boolean exists = (cursor.getCount() > 0);
         cursor.close();
+        db.close();
         return exists;
+    }
+
+    private String getColumnData(Cursor cursor, String columnName) {
+        int index = cursor.getColumnIndex(columnName);
+        if (index != -1) {
+            return cursor.getString(index);
+        }
+        return null;
+    }
+
+
+    public String getUsernameByEmail(String email) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT USERNAME FROM " + TABLE_NAME + " WHERE EMAIL=?", new String[]{email});
+        String username = null;
+        if(cursor.moveToFirst()) {
+            username = getColumnData(cursor, COL_3);
+        }
+        cursor.close();
+        db.close();
+        return username;
+    }
+
+    public String getAvatarUriByEmail(String email) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT AVATAR FROM " + TABLE_NAME + " WHERE EMAIL=?", new String[]{email});
+        String avatarUri = null;
+        if(cursor.moveToFirst()) {
+            avatarUri = getColumnData(cursor, COL_8);
+        }
+        cursor.close();
+        db.close();
+        return avatarUri;
+    }
+
+    public Cursor getUserByEmail(String email) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_NAME + " WHERE EMAIL=?", new String[]{email});
+//        db.close();
+        return cursor;
     }
 }
