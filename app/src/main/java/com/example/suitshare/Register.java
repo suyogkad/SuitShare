@@ -75,7 +75,7 @@ public class Register extends AppCompatActivity {
                 }
 
                 if (pwd.equals(confirmPwd)) {
-                    boolean isInserted = db.insertData(fullNameValue, user, em, phone, dobValue, pwd, confirmPwd, selectedAvatarUri);
+                    boolean isInserted = db.insertData(fullNameValue, user, em, phone, dobValue, pwd, selectedAvatarUri);
                     if (isInserted) {
                         Toast.makeText(Register.this, "Registered successfully!", Toast.LENGTH_SHORT).show();
                         startActivity(new Intent(Register.this, Login.class));

@@ -21,7 +21,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String COL_8 = "AVATAR"; // Added column for Avatar URI
 
     public DatabaseHelper(Context context) {
-        super(context, DATABASE_NAME, null, 2); // version updated to 2 since the database schema has changed
+        super(context, DATABASE_NAME, null, 3); // version updated to 2 since the database schema has changed
     }
 
     @Override
@@ -35,7 +35,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         onCreate(db);
     }
 
-    public boolean insertData(String fullNameValue, String fullname, String username, String email, String phone, String dob, String password, String avatarUri) {
+
+    public boolean insertData(String fullname, String username, String email, String phone, String dob, String password, String avatarUri) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues contentValues = new ContentValues();
         contentValues.put(COL_2, fullname);
@@ -44,10 +45,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         contentValues.put(COL_5, phone);
         contentValues.put(COL_6, dob);
         contentValues.put(COL_7, password);
-        contentValues.put(COL_8, avatarUri); // Added this line to put the avatar URI
+        contentValues.put(COL_8, avatarUri); // to put the avatar URI
         long result = db.insert(TABLE_NAME, null, contentValues);
         return result != -1;  // if result == -1 data not inserted
     }
+
 
     public Cursor checkUser(String email, String password) {
         SQLiteDatabase db = this.getReadableDatabase();  // <-- Changed to getReadableDatabase
