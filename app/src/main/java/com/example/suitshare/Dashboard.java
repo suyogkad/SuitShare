@@ -4,10 +4,12 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.cardview.widget.CardView;
 import com.bumptech.glide.Glide;
 
 import java.text.SimpleDateFormat;
@@ -18,13 +20,14 @@ public class Dashboard extends AppCompatActivity {
     private ImageView profileImage;
     private TextView usernameText;
     private TextView dateText;
+    private CardView addItemCard;  // CardView reference
 
     DatabaseHelper myDb;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_dashboard);  // Ensure the XML layout name matches
+        setContentView(R.layout.activity_dashboard);
 
         // Initialize database helper
         myDb = new DatabaseHelper(this);
@@ -33,10 +36,12 @@ public class Dashboard extends AppCompatActivity {
         usernameText = findViewById(R.id.usernameText);
         dateText = findViewById(R.id.dateText);
 
-        Intent intent = getIntent();
-        String email = intent.getStringExtra("email");
+        // Initialize the CardView from the layout
+        addItemCard = findViewById(R.id.addItemCard);
 
-        // Log the received email for debugging
+        Intent intent = getIntent();
+        final String email = intent.getStringExtra("email");
+
         Log.d("Dashboard", "Email received: " + email);
 
         if (email != null) {
@@ -51,13 +56,11 @@ public class Dashboard extends AppCompatActivity {
                     String username = cursor.getString(usernameColumnIndex);
                     String avatarUri = cursor.getString(avatarColumnIndex);
 
-                    // Log the retrieved data for debugging
                     Log.d("Dashboard", "Username: " + username + ", Avatar URI: " + avatarUri);
 
                     usernameText.setText(username);
 
-                    // Load image using Glide or any other image loading library
-                    if (avatarUri != null && !avatarUri.trim().isEmpty()) {  // check if avatarUri is not null and not empty
+                    if (avatarUri != null && !avatarUri.trim().isEmpty()) {
                         Glide.with(this)
                                 .load(avatarUri)
                                 .placeholder(R.mipmap.ic_launcher)
@@ -67,9 +70,22 @@ public class Dashboard extends AppCompatActivity {
                     e.printStackTrace();
                 }
             }
-
             cursor.close();
         }
+
+        // Setting up navigation to Additem activity
+        // Start - This block is what you'll replicate for other actions
+
+        addItemCard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Dashboard.this, Additem.class);
+                intent.putExtra("email", email);  // Passing email to the next activity if needed
+                startActivity(intent);
+            }
+        });
+
+        // End - This block is what you'll replicate for other actions
 
         // Set current date
         Calendar calendar = Calendar.getInstance();

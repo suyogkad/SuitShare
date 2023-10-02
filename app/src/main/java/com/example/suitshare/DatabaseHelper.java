@@ -76,6 +76,22 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return result != -1;
     }
 
+    public boolean insertItem(int userId, String itemName, String itemDescription, boolean purchaseStatus, double price, String locationTag) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues contentValues = new ContentValues();
+        contentValues.put(COLUMN_USER_ID, userId);
+        contentValues.put(COLUMN_ITEM_NAME, itemName);
+        contentValues.put(COLUMN_ITEM_DESCRIPTION, itemDescription);
+        contentValues.put(COLUMN_PURCHASE_STATUS, purchaseStatus ? 1 : 0); // Converting boolean to int
+        contentValues.put(COLUMN_PRICE, price);
+        contentValues.put(COLUMN_DATE_ADDED, System.currentTimeMillis()); // Storing current timestamp
+        contentValues.put(COLUMN_LOCATION_TAG, locationTag);
+
+        long result = db.insert(TABLE_ITEMS, null, contentValues);
+        db.close();
+        return result != -1;
+    }
+
     public Cursor checkUser(String email, String password) {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor res = db.rawQuery("SELECT * FROM " + TABLE_NAME + " WHERE EMAIL=? AND PASSWORD=?", new String[]{email, password});
