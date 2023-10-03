@@ -23,14 +23,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     // Items Table
     private static final String TABLE_ITEMS = "items";
     private static final String COLUMN_ITEM_ID = "item_id";
-    private static final String COLUMN_USER_ID = "user_id";  // This will be linked to COL_1 of the user_table
+    private static final String COLUMN_USER_ID = "user_id";
     private static final String COLUMN_ITEM_NAME = "item_name";
     private static final String COLUMN_ITEM_DESCRIPTION = "item_description";
     private static final String COLUMN_PURCHASE_STATUS = "purchase_status";
     private static final String COLUMN_PRICE = "price";
     private static final String COLUMN_DATE_ADDED = "date_added";
     private static final String COLUMN_LOCATION_TAG = "location_tag";
-
 
     public DatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, 4);
@@ -40,7 +39,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("CREATE TABLE " + TABLE_NAME + " (ID INTEGER PRIMARY KEY AUTOINCREMENT, FULLNAME TEXT, USERNAME TEXT UNIQUE, EMAIL TEXT UNIQUE, PHONE TEXT, DOB TEXT, PASSWORD TEXT, AVATAR TEXT)");
 
-        // Creating the Items table
         db.execSQL("CREATE TABLE " + TABLE_ITEMS + " ("
                 + COLUMN_ITEM_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, "
                 + COLUMN_USER_ID + " INTEGER, "
@@ -53,11 +51,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + "FOREIGN KEY (" + COLUMN_USER_ID + ") REFERENCES " + TABLE_NAME + "(" + COL_1 + "))");
     }
 
-
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_ITEMS);  // Dropping the Items table if it exists
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_ITEMS);
         onCreate(db);
     }
 
@@ -82,9 +79,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         contentValues.put(COLUMN_USER_ID, userId);
         contentValues.put(COLUMN_ITEM_NAME, itemName);
         contentValues.put(COLUMN_ITEM_DESCRIPTION, itemDescription);
-        contentValues.put(COLUMN_PURCHASE_STATUS, purchaseStatus ? 1 : 0); // Converting boolean to int
+        contentValues.put(COLUMN_PURCHASE_STATUS, purchaseStatus ? 1 : 0);
         contentValues.put(COLUMN_PRICE, price);
-        contentValues.put(COLUMN_DATE_ADDED, System.currentTimeMillis()); // Storing current timestamp
+        contentValues.put(COLUMN_DATE_ADDED, System.currentTimeMillis());
         contentValues.put(COLUMN_LOCATION_TAG, locationTag);
 
         long result = db.insert(TABLE_ITEMS, null, contentValues);
@@ -95,7 +92,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public Cursor checkUser(String email, String password) {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor res = db.rawQuery("SELECT * FROM " + TABLE_NAME + " WHERE EMAIL=? AND PASSWORD=?", new String[]{email, password});
-//        db.close();
         return res;
     }
 
@@ -115,7 +111,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
         return null;
     }
-
 
     public String getUsernameByEmail(String email) {
         SQLiteDatabase db = this.getReadableDatabase();
@@ -144,7 +139,12 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public Cursor getUserByEmail(String email) {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_NAME + " WHERE EMAIL=?", new String[]{email});
-//        db.close();
         return cursor;
+    }
+
+    public Cursor getAllItemsForUser(int userId) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        Cursor res = db.rawQuery("SELECT * FROM " + TABLE_ITEMS + " WHERE " + COLUMN_USER_ID + "=?", new String[]{String.valueOf(userId)});
+        return res;
     }
 }
